@@ -1,0 +1,58 @@
+# Sample Configuration for ML Experiment Tracker
+# This file shows all available configuration options with their default values
+
+# Project settings
+project_name: "my_ml_project"
+experiment_name: null  # Optional: group related runs
+run_name: null  # Optional: custom run name (auto-generated if not provided)
+tags: []  # Optional: list of tags for categorization
+description: ""  # Optional: run description
+
+# Backend configuration
+backend:
+  # Priority order for backend selection (first available is used)
+  priority:
+    - wandb
+    - mlflow
+    - local
+  
+  # MLflow settings
+  mlflow_tracking_uri: "http://localhost:5000"
+  mlflow_auto_start: true
+  
+  # Weights & Biases settings
+  wandb_entity: null  # Your W&B username/team
+  wandb_project: null  # Project name (uses project_name if not set)
+  wandb_mode: "online"  # online, offline, or disabled
+  
+  # Local backend settings
+  local_dir: "./experiment_logs"
+
+# Logging configuration
+logging:
+  log_system_info: true  # CPU, GPU, memory info
+  log_git_info: true  # Git hash, branch, dirty status
+  log_code_snapshot: true  # Save copy of training script
+  auto_log_params: true  # Automatically log all parameters
+  auto_log_metrics: true  # Automatically log all metrics
+  metrics_step_key: "step"  # Key name for step/epoch tracking
+
+# Reporting configuration
+reporting:
+  generate_html_report: true  # Generate static HTML report
+  report_dir: "./experiment_reports"
+  include_plots: true  # Include metric visualizations
+  include_diff: true  # Include parameter/code diff
+  plot_format: "plotly"  # plotly (interactive) or matplotlib (static)
+  open_report_in_browser: false  # Auto-open report after run
+
+# Artifact configuration
+artifacts:
+  artifact_dir: "./experiment_artifacts"
+  save_model: true  # Save trained models
+  save_predictions: true  # Save model predictions
+  compression: false  # Compress artifacts (slower but smaller)
+
+# Advanced options
+enable_docker: false
+docker_compose_file: null
