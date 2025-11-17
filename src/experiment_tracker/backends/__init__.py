@@ -18,6 +18,14 @@ except ImportError:
     _mlflow_available = False
     MLflowBackend = None
 
+# W&B backend - conditionally imported
+try:
+    from experiment_tracker.backends.wandb_backend import WandbBackend
+    _wandb_available = True
+except ImportError:
+    _wandb_available = False
+    WandbBackend = None
+
 __all__ = [
     'BaseBackend',
     'BackendType',
@@ -25,5 +33,6 @@ __all__ = [
     'BackendFactory',
     'create_backend',
     'LocalBackend',
-    'MLflowBackend'
+    'MLflowBackend',
+    'WandbBackend'
 ]
