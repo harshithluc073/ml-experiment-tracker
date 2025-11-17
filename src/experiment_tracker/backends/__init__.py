@@ -8,10 +8,13 @@ from experiment_tracker.backends.base import (
     create_backend
 )
 
+from experiment_tracker.backends.local_backend import LocalBackend
+
 __all__ = [
     'BaseBackend',
     'BackendType',
     'BackendStatus',
     'BackendFactory',
-    'create_backend'
+    'create_backend',
+    'LocalBackend'
 ]
