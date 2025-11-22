@@ -16,5 +16,7 @@ __all__ = [
     'DiffGenerator',
     'RunComparison',
     'Diff',
-    'DiffType'
+    'DiffType',
+    'HTMLReporter',
+    'AutoPlotter'
 ]

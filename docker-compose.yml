@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  # ML Experiment Tracker
+  experiment-tracker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ml-experiment-tracker:latest
+    container_name: ml-experiment-tracker
+    volumes:
+      # Mount local workspace
+      - ./workspace:/workspace
+      # Mount experiments directory
+      - ./experiments:/workspace/experiments
+      # Mount artifacts directory
+      - ./artifacts:/workspace/artifacts
+    environment:
+      - PYTHONUNBUFFERED=1
+      - EXPERIMENT_TRACKER_DIR=/workspace/experiments
+    ports:
+      - "5000:5000"  # MLflow UI
+      - "8888:8888"  # Jupyter (if needed)
+    networks:
+      - ml-network
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null  # Keep container running
+
+  # MLflow Server (optional)
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    container_name: mlflow-server
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./mlflow-data:/mlflow
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow/mlflow.db
+      - MLFLOW_DEFAULT_ARTIFACT_ROOT=/mlflow/artifacts
+    networks:
+      - ml-network
+    command: >
+      mlflow server
+      --host 0.0.0.0
+      --port 5000
+      --backend-store-uri sqlite:///mlflow/mlflow.db
+      --default-artifact-root /mlflow/artifacts
+
+  # Jupyter Notebook (optional)
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ml-experiment-tracker:latest
+    container_name: ml-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./workspace:/workspace
+      - ./notebooks:/workspace/notebooks
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    networks:
+      - ml-network
+    command: >
+      jupyter lab
+      --ip=0.0.0.0
+      --port=8888
+      --no-browser
+      --allow-root
+      --NotebookApp.token=''
+      --NotebookApp.password=''
+
+networks:
+  ml-network:
+    driver: bridge
+
+volumes:
+  mlflow-data:
+  workspace:
+  experiments:
+  artifacts:
