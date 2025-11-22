@@ -12,5 +12,9 @@ __all__ = [
     'show_setup_instructions',
     'ArtifactManager',
     'Artifact',
-    'ArtifactType'
+    'ArtifactType',
+    'DiffGenerator',
+    'RunComparison',
+    'Diff',
+    'DiffType'
 ]
