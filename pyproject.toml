@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools-scm>=6.2"]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -12,32 +12,51 @@ license = {text = "MIT"}
 authors = [
     {name = "Harshith", email = "chitikeshiharshith@gmail.com"}
 ]
-keywords = [
-    "machine-learning",
-    "mlops",
-    "experiment-tracking",
-    "mlflow",
-    "wandb",
-    "reproducibility"
-]
+keywords = ["machine-learning", "experiment-tracking", "mlops", "mlflow", "wandb"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
+
+dependencies = [
+    "pyyaml>=5.4.0",
+    "psutil>=5.8.0",
+]
+
+[project.optional-dependencies]
+all = [
+    "mlflow>=2.0.0",
+    "wandb>=0.12.0",
+    "matplotlib>=3.5.0",
+    "numpy>=1.21.0",
+]
+mlflow = ["mlflow>=2.0.0"]
+wandb = ["wandb>=0.12.0"]
+plotting = ["matplotlib>=3.5.0", "numpy>=1.21.0"]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=3.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.950",
+]
+
+[project.scripts]
+experiment-tracker = "experiment_tracker.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/harshithluc073/ml-experiment-tracker"
-Documentation = "https://github.com/harshithluc073/ml-experiment-tracker/docs"
+Documentation = "https://github.com/harshithluc073/ml-experiment-tracker#readme"
 Repository = "https://github.com/harshithluc073/ml-experiment-tracker"
-"Bug Tracker" = "https://github.com/harshithluc073/ml-experiment-tracker/issues"
+Issues = "https://github.com/harshithluc073/ml-experiment-tracker/issues"
 
 [tool.black]
 line-length = 100
@@ -60,35 +79,66 @@ extend-exclude = '''
 [tool.isort]
 profile = "black"
 line_length = 100
-skip_gitignore = true
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
 
 [tool.mypy]
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "mlflow.*",
+    "wandb.*",
+    "matplotlib.*",
+    "psutil.*",
+]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-python_files = "test_*.py"
-python_classes = "Test*"
-python_functions = "test_*"
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
     "--cov=experiment_tracker",
     "--cov-report=html",
     "--cov-report=term-missing",
-    "--verbose"
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
 ]
 
 [tool.coverage.run]
 source = ["src"]
+branch = true
 omit = [
     "*/tests/*",
     "*/test_*.py",
 ]
 
 [tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
@@ -96,6 +146,5 @@ exclude_lines = [
     "raise NotImplementedError",
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
-    "class .*\\bProtocol\\):",
-    "@(abc\\.)?abstractmethod",
+    "@abstractmethod",
 ]
