@@ -2,8 +2,7 @@
 
 from experiment_tracker.utils.env_detector import (
     detect_environment,
-    EnvironmentDetector,
-    EnvironmentType
+    EnvironmentDetector
 )
 from experiment_tracker.utils.artifact_manager import (
     ArtifactManager,
@@ -22,7 +21,6 @@ from experiment_tracker.utils.auto_plotter import AutoPlotter
 __all__ = [
     'detect_environment',
     'EnvironmentDetector',
-    'EnvironmentType',
     'ArtifactManager',
     'Artifact',
     'ArtifactType',
